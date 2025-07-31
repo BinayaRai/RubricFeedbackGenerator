@@ -1,0 +1,126 @@
+@model AIS_RubricFeedbackGenerator.Models.Student
+
+@{
+    ViewData["Title"] = "Delete Student";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Delete Student</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-warning me-2"></i>
+                    <strong>Warning:</strong> Are you sure you want to delete this student? This action cannot be undone.
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Student ID</label>
+                            <div class="fw-bold">@Html.DisplayFor(model => model.StudentId)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Full Name</label>
+                            <div class="fw-bold">
+                                @if (!string.IsNullOrEmpty(Model.FullName))
+                                {
+                                    @Html.DisplayFor(model => model.FullName)
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Not provided</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted">Email Address</label>
+                    <div>
+                        @if (!string.IsNullOrEmpty(Model.Email))
+                        {
+                            @Html.DisplayFor(model => model.Email)
+                        }
+                        else
+                        {
+                            <span class="text-muted fst-italic">Not provided</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Created By</label>
+                            <div>
+                                @if (Model.CreatedByNavigation != null)
+                                {
+                                    <span class="badge bg-secondary">@Model.CreatedByNavigation.UserName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Unknown</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Created At</label>
+                            <div>
+                                @if (Model.CreatedAt.HasValue)
+                                {
+                                    <span class="badge bg-info">@Model.CreatedAt.Value.ToString("dd MMM yyyy 'at' HH:mm")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Not available</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle me-2"></i>Important Information:</h6>
+                    <ul class="mb-0">
+                        <li>Deleting this student will permanently remove their record from the system</li>
+                        <li>Any associated data (assignments, grades, etc.) may also be affected</li>
+                        <li>This action cannot be reversed once confirmed</li>
+                    </ul>
+                </div>
+
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="StudentId" />
+                    <div class="d-flex justify-content-between">
+                        <a class="btn btn-secondary" asp-action="Index">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <div>
+                            <a class="btn btn-outline-info me-2" asp-action="Details" asp-route-id="@Model.StudentId">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <button type="submit" class="btn btn-danger" onclick="return confirmDelete()">
+                                <i class="fas fa-trash"></i> Delete Student
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete() {
+            return confirm('Are you absolutely sure you want to delete this student? This action cannot be undone.');
+        }
+    </script>
+}
