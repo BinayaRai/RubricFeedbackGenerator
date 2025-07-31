@@ -1,0 +1,138 @@
+@using AIS_RubricFeedbackGenerator.ViewModels
+@model RubricFormViewModel
+@{
+	var isEdit = !string.IsNullOrEmpty(Model.RubricTitle);
+}
+
+<h2>@(isEdit ? "Edit Marking Rubric" : "Create Marking Rubric")</h2>
+@if (!ViewData.ModelState.IsValid)
+{
+	<div class="alert alert-danger">
+		<ul>
+			@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+			{
+				<li>@error.ErrorMessage</li>
+			}
+		</ul>
+	</div>
+}
+@using (Html.BeginForm(ViewData["FormAction"]?.ToString(), "Rubric", FormMethod.Post))// or Edit, etc.
+{
+	@Html.AntiForgeryToken()
+	<input type="hidden" asp-for="TaskId" />
+
+	<fieldset class="mb-3">
+		<div class="table-responsive">
+			<table class="table mb-3">
+				<thead class="">
+					<tr>
+						<th class="table-header-rubric" colspan="7">
+							<div class="form-floating">
+								<input asp-for="RubricTitle" id="floatingTitle" placeholder="Rubric Title" class="form-control" required />
+								<label for="floatingTitle">Rubric Title</label>
+							</div>
+						</th>
+					</tr>
+					<tr>
+						<th class="table-header-rubric" colspan="7">
+							<div class="form-floating">
+								<textarea asp-for="Description" id="floatingDesc" placeholder="Rubric Description" class="form-control"></textarea>
+								<label for="floatingDesc">Rubric Description</label>
+							</div>
+							@* <label asp-for="Rubric.Description" class="form-label">Rubric Description</label> *@
+						</th>
+					</tr>
+					<tr id="table-header-score" class="text-center align-middle">
+						<th><span class="fw-bold">Criteria</span></th>
+						@for (int j = 0; j < Model.ScoreDefinitions.Count; j++)
+						{
+							<th>
+								<div class="input-group">
+									<input asp-for="@Model.ScoreDefinitions[j].ScoreValue" type="number" placeholder="Value" class="form-control text-center fw-bold" style="max-width:60px" />
+									<input asp-for="@Model.ScoreDefinitions[j].ScoreName" placeholder="Score Name" class="form-control fw-bold" />
+								</div>
+							</th>
+						}
+						<th class="text-center align-middle">
+							<button id="score-btn-add" type="button" onclick=@("addScoreColumn(" + (Model.ScoreDefinitions.Count + 1).ToString() + ")") class="btn btn-primary fa-solid fa-plus fw-bold"></button>
+						</th>
+					</tr>
+				</thead>
+				<tbody id="table-body" class="table-group-divider ">
+					@for (int i = 0; i < Model.Criteria.Count; i++)
+					{
+						<tr id=@("criterion-" + i.ToString()) class="border-secondary">
+							<td>
+								<textarea asp-for="@Model.Criteria[i].Title" placeholder="Criterion" class="form-control" rows="2"></textarea>
+							</td>
+							@for (int j = 0; j < Model.ScoreDefinitions.Count; j++)
+							{
+								<td id=@("score-" + j.ToString())>
+									<textarea asp-for="@Model.ScoreLevelDescriptions[i][j]" placeholder="Score Condition" class="form-control" rows="2"></textarea>
+								</td>
+							}
+							<td class="text-center align-middle">
+								<button type="button" class="btn btn-danger btn-sm delete-row-btn" disabled id=@("delete-row-btn-" + i.ToString()) onclick=@("removeCriterion(" + i.ToString() + ")")>Delete</button>
+							</td>
+						</tr>
+					}
+				</tbody>
+				<tfoot>
+					<tr>
+						<td class="text-center align-middle">
+							<button id="criterion-btn-add" type="button" onclick="addCriterion()" class="btn btn-primary fa-solid fa-plus fw-bold"></button>
+						</td>
+						@for (int j = 0; j < Model.ScoreDefinitions.Count; j++)
+						{
+							<td class="text-center align-middle">
+								<button type="button" class="btn btn-danger btn-sm delete-col-btn" id=@("delete-row-btn-" + j.ToString()) onclick=@("removeScore(" + j.ToString() + ")")>Delete</button>
+							</td>
+						}
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</fieldset>
+	<div class="text-end mt-3">
+		<button type="submit" class="btn btn-success">Save Rubric</button>
+		<a asp-action="Edit" asp-controller="Task" asp-route-id="@Model.TaskId" class="btn btn-secondary">Cancel</a>
+	</div>
+}
+
+<style>
+	input[type="number"]::-webkit-inner-spin-button,
+	input[type="number"]::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	input[type="number"] {
+		-moz-appearance: textfield;
+	}
+
+	textarea.form-control {
+		resize: none;
+		overflow: hidden;
+	}
+</style>
+<script>
+	// Function to auto-expand a textarea
+	function autoExpand(textarea) {
+		// Reset height to auto to allow shrinking if text is deleted
+		textarea.style.height = 'auto';
+		// Set height to scrollHeight to expand to fit content
+		textarea.style.height = textarea.scrollHeight + 'px';
+	}
+
+	// Get all textareas that should auto-expand
+	const textareas = document.querySelectorAll('textarea.form-control');
+
+	// Loop through each textarea and attach the event listener
+	textareas.forEach(textarea => {
+		// Adjust height on initial load (in case there's pre-filled content)
+		autoExpand(textarea);
+
+		// Add an input event listener to adjust height as user types
+		textarea.addEventListener('input', () => autoExpand(textarea));
+	});
+</script>

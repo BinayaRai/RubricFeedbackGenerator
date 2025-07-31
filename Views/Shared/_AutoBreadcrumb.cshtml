@@ -1,0 +1,61 @@
+﻿@{
+    var routeData = ViewContext.RouteData.Values;
+    var customBreadcrumb = ViewBag.Breadcrumb as IEnumerable<dynamic>;
+    string controller = routeData["controller"]?.ToString();
+    string action = routeData["action"]?.ToString();
+    string page = routeData["page"]?.ToString(); // For Razor Pages
+
+    string FormatSegment(string segment) =>
+        System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
+            segment?.Replace("-", " ").Replace("/", " ").Trim('/') ?? "");
+
+    bool isHomePage = string.Equals(controller, "Home", StringComparison.OrdinalIgnoreCase)
+                      && string.Equals(action, "Index", StringComparison.OrdinalIgnoreCase);
+
+    bool isIdentityPage = page != null && page.StartsWith("/Account", StringComparison.OrdinalIgnoreCase);
+}
+
+@if (!isHomePage)
+{
+    <nav aria-label="breadcrumb" class="mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+
+            @if (customBreadcrumb != null)
+            {
+                foreach (var item in customBreadcrumb.Skip(1)) // Skip Home since it's already added
+                {
+                    if (!string.IsNullOrEmpty(item.Url as string))
+                    {
+                        <li class="breadcrumb-item"><a href="@item.Url">@item.Title</a></li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">@item.Title</li>
+                    }
+                }
+            }
+            else if (isIdentityPage)
+            {
+                var lastSegment = page.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+                <li class="breadcrumb-item active" aria-current="page">@FormatSegment(lastSegment)</li>
+            }
+            else if (!string.IsNullOrEmpty(controller))
+            {
+                if (!string.IsNullOrEmpty(action) && action != "Index")
+                {
+                    <li class="breadcrumb-item">
+                        <a asp-controller="@controller" asp-action="Index">@FormatSegment(controller)</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">@FormatSegment(action)</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item active" aria-current="page">@FormatSegment(controller)</li>
+                }
+            }
+        </ol>
+    </nav>
+}

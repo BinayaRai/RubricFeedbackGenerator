@@ -1,0 +1,19 @@
+﻿@model AIS_RubricFeedbackGenerator.ViewModels.TaskFormViewModel
+
+<h3 class="mb-2 card-header">Task Details</h3>
+<div class="card-body">
+	<div class="mb-3">
+		<div class="form-floating">
+			<input asp-for="Title" id="floatingTitle" placeholder="Title" class="form-control" />
+			<label asp-for="Title" class="fw-bold" for="floatingTitle">Task Title</label>
+		</div>
+		<span asp-validation-for="Title" class="text-danger"></span>
+	</div>
+	<div>
+		<div class="form-floating">
+			<textarea asp-for="Description" for="floatingDesc" placeholder="Description" class="form-control" style="height:100px"></textarea>
+			<label asp-for="Description" class="fw-bold" id="floatingDesc">Task Description</label>
+		</div>
+		<span asp-validation-for="Description" class="text-danger"></span>
+	</div>
+</div>

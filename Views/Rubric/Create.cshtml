@@ -1,0 +1,12 @@
+﻿@using AIS_RubricFeedbackGenerator.ViewModels
+@model RubricFormViewModel
+
+@{
+    ViewData["FormAction"] = "Create";
+}
+@await Html.PartialAsync("_RubricForm", Model)
+
+@section Scripts {
+	<script src="~/js/rubricForm.js"></script>
+	<partial name="_ValidationScriptsPartial" />
+}
