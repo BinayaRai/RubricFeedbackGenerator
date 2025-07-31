@@ -1,0 +1,131 @@
+@model AIS_RubricFeedbackGenerator.Models.Student
+
+@{
+    ViewData["Title"] = "Student Details";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-user"></i> Student Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Student ID</label>
+                            <div class="fw-bold fs-5">@Html.DisplayFor(model => model.StudentId)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Full Name</label>
+                            <div class="fw-bold fs-5">
+                                @if (!string.IsNullOrEmpty(Model.FullName))
+                                {
+                                    @Html.DisplayFor(model => model.FullName)
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Not provided</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted">Email Address</label>
+                    <div>
+                        @if (!string.IsNullOrEmpty(Model.Email))
+                        {
+                            <a href="mailto:@Model.Email" class="fs-5">
+                                <i class="fas fa-envelope me-2"></i>@Html.DisplayFor(model => model.Email)
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted fst-italic fs-5">Not provided</span>
+                        }
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Created By</label>
+                            <div>
+                                @if (Model.CreatedByNavigation != null)
+                                {
+                                    <span class="badge bg-secondary">@Model.CreatedByNavigation.UserName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Unknown</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Created At</label>
+                            <div>
+                                @if (Model.CreatedAt.HasValue)
+                                {
+                                    <span class="badge bg-info">@Model.CreatedAt.Value.ToString("dd MMM yyyy 'at' HH:mm")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Not available</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-light border">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <i class="fas fa-graduation-cap fa-2x text-primary mb-2"></i>
+                                <h6 class="mb-0">Student Profile</h6>
+                                <small class="text-muted">Academic Record</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <i class="fas fa-tasks fa-2x text-success mb-2"></i>
+                                <h6 class="mb-0">0 Tasks</h6>
+                                <small class="text-muted">Assignments Completed</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
+                                <h6 class="mb-0">No Data</h6>
+                                <small class="text-muted">Performance Analytics</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a class="btn btn-secondary" asp-action="Index">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                    <div>
+                        <a class="btn btn-outline-warning me-2" asp-action="Edit" asp-route-id="@Model.StudentId">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@Model.StudentId">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

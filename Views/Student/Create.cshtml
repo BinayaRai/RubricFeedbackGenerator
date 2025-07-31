@@ -1,0 +1,78 @@
+@model AIS_RubricFeedbackGenerator.Models.StudentViewModel
+
+@{
+    ViewData["Title"] = "Add New Student";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-user-plus"></i> Add New Student</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="StudentId" class="form-label">Student ID <span class="text-danger">*</span></label>
+                                <input asp-for="StudentId" class="form-control" placeholder="Enter student ID" required />
+                                <span asp-validation-for="StudentId" class="text-danger"></span>
+                                <div class="form-text">Unique identifier for the student (e.g., STU001, 2024001)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="FullName" class="form-label">Full Name</label>
+                                <input asp-for="FullName" class="form-control" placeholder="Enter full name" />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="Enter email address" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <div class="form-text">Optional - Used for notifications and communication</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a class="btn btn-secondary" asp-action="Index">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                        <div>
+                            <button type="reset" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Create Student
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Auto-focus on first input
+        $(document).ready(function() {
+            $('#StudentId').focus();
+            
+            // Auto-generate email format hint based on student ID
+            $('#StudentId').on('input', function() {
+                var studentId = $(this).val();
+                if (studentId && !$('#Email').val()) {
+                    var hint = studentId.toLowerCase() + '@university.edu';
+                    $('#Email').attr('placeholder', 'e.g., ' + hint);
+                }
+            });
+        });
+    </script>
+}

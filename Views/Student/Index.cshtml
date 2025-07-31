@@ -1,0 +1,132 @@
+@model IEnumerable<AIS_RubricFeedbackGenerator.Models.Student>
+
+@{
+    ViewData["Title"] = "Students";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2><i class="fas fa-users"></i> Students</h2>
+            <a class="btn btn-primary" asp-action="Create">
+                <i class="fas fa-plus"></i> Add New Student
+            </a>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="card">
+            <div class="card-body">
+                @if (Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="studentsTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Created By</th>
+                                    <th>Created At</th>
+                                    <th width="200">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@Html.DisplayFor(modelItem => student.StudentId)</strong>
+                                        </td>
+                                        <td>@Html.DisplayFor(modelItem => student.FullName)</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(student.Email))
+                                            {
+                                                <a href="mailto:@student.Email">@student.Email</a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Not provided</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (student.CreatedByNavigation != null)
+                                            {
+                                                @student.CreatedByNavigation.UserName
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Unknown</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (student.CreatedAt.HasValue)
+                                            {
+                                                @student.CreatedAt.Value.ToString("dd MMM yyyy")
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">N/A</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@student.StudentId" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a class="btn btn-sm btn-outline-warning" asp-action="Edit" asp-route-id="@student.StudentId" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@student.StudentId" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No Students Found</h4>
+                        <p class="text-muted mb-4">Get started by adding your first student.</p>
+                        <a class="btn btn-primary" asp-action="Create">
+                            <i class="fas fa-plus"></i> Add First Student
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (Model.Any())
+    {
+        <script>
+            $(document).ready(function() {
+                $('#studentsTable').DataTable({
+                    "order": [[ 1, "asc" ]], // Sort by Full Name by default
+                    "pageLength": 25,
+                    "responsive": true,
+                    "language": {
+                        "search": "Search students:",
+                        "lengthMenu": "Show _MENU_ students per page",
+                        "info": "Showing _START_ to _END_ of _TOTAL_ students",
+                        "emptyTable": "No students found"
+                    }
+                });
+            });
+        </script>
+    }
+}
